@@ -119,7 +119,7 @@ body {
 	font-family: system-ui, sans-serif;
 	color: var(--clr-neutral-100);
 	line-height: 1.6;
-	background: var(--clr-neutral-900);
+	background: hsl(231, 91%, 4%);
 	min-height: 100dvh;
 }
 .button {
@@ -303,7 +303,7 @@ footer input.button {
 	.hero {
 		display: grid;
 		max-width: 100%;
-		grid-template-columns: 70% 10% 20%;
+		grid-template-columns: 70% 30%;
 	}
 	.hero__img {
 		grid-column: 2 / 4;
@@ -373,7 +373,7 @@ footer input.button {
 	}
 	/* HERO STYLES */
 	.hero__img {
-		width: 445px;
+		max-width: none;
 	}
 	.hero__title {
 		font-size: 88px;
