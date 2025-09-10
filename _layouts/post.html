@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if page.title %}{{ page.title }} - {% endif %}{{ site.title }}</title>
+    <link rel="stylesheet" href="/style.css">
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-7GWY4W5SL2"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'G-7GWY4W5SL2');
+    </script>
+</head>
+<body>
+    <nav class="blog-nav">
+        <a href="/">← Back to Portfolio</a>
+    </nav>
+    
+    <main class="blog-content">
+        {{ content }}
+    </main>
+    
+    <style>
+        .blog-nav {
+            padding: 2rem;
+            background: #1a1a1a;
+        }
+        .blog-nav a {
+            color: #4ee1a0;
+            text-decoration: none;
+        }
+        .blog-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            line-height: 1.6;
+        }
+        .blog-content h1 {
+            color: #fff;
+            margin-bottom: 0.5rem;
+        }
+        .blog-content p {
+            color: #d9d9d9;
+            margin-bottom: 1rem;
+        }
+        .post-meta {
+            color: #7d7d7d;
+            font-size: 0.9rem;
+            margin-bottom: 2rem;
+        }
+    </style>
+</body>
+</html>
