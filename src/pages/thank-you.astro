@@ -1,0 +1,50 @@
+---
+import Navigation from "../components/Navigation.astro";
+import Footer from "../components/Footer.astro";
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content="Thank you for your message" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>Thank You - Peter Jacobs</title>
+    <link rel="stylesheet" href="/src/styles/style.css" />
+  </head>
+  <body class="grid-layout">
+    <Navigation />
+
+    <main>
+      <section class="thank-you">
+        <h1>Thank You!</h1>
+        <p>
+          Your message has been sent successfully. I'll get back to you as soon
+          as possible.
+        </p>
+        <a href="/" class="button">Back to Home</a>
+      </section>
+    </main>
+
+    <Footer />
+  </body>
+</html>
+
+<style>
+  .thank-you {
+    grid-column: 2 / 3;
+    text-align: center;
+    padding: 4rem 0;
+  }
+
+  .thank-you h1 {
+    margin-bottom: 1rem;
+    color: var(--clr-neutral-900);
+  }
+
+  .thank-you p {
+    margin-bottom: 2rem;
+    color: var(--clr-neutral-800);
+  }
+</style>
