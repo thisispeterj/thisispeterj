@@ -1,86 +1,113 @@
 ---
 layout: default
+title: Blog
 ---
 
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Blog - Peter Jacobs</title>
-    <link rel="stylesheet" href="/style.css">
-</head>
-<body>
-    <nav class="blog-nav">
-        <a href="/">← Back to Portfolio</a>
-    </nav>
-    
-    <main class="blog-content">
-        <h1>Blog</h1>
-        <p>Thoughts on development, accessibility, and building great user experiences.</p>
-        
-        <div class="posts">
-            {% for post in site.posts %}
-            <article class="post-preview">
-                <h2><a href="{{ post.url }}">{{ post.title }}</a></h2>
-                <p class="post-meta">{{ post.date | date: "%B %d, %Y" }}</p>
-                <p>{{ post.excerpt }}</p>
-                <a href="{{ post.url }}" class="read-more">Read more →</a>
-            </article>
-            {% endfor %}
+    <link rel="stylesheet" href="style.css" />
+    <script src="js/main.js"></script>
+  </head>
+  <body>
+    <div class="grid-layout">
+      <header class="main-header">
+        <div class="nav-left">
+          <a href="/" class="logo">PeterJacobs</a>
+          <nav class="main-nav">
+            <ul>
+              <li><a href="/#skills" class="nav-link">Skills</a></li>
+              <li><a href="/#projects" class="nav-link">Projects</a></li>
+              <li><a href="/#contact" class="nav-link">Contact</a></li>
+              <li><a href="/blog.html" class="nav-link active">Blog</a></li>
+            </ul>
+          </nav>
         </div>
-    </main>
-    
-    <style>
-        .blog-nav {
-            padding: 2rem;
-            background: #1a1a1a;
-        }
-        .blog-nav a {
-            color: #4ee1a0;
-            text-decoration: none;
-        }
-        .blog-content {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-        .blog-content h1 {
-            color: #fff;
-            margin-bottom: 1rem;
-        }
-        .blog-content > p {
-            color: #d9d9d9;
-            margin-bottom: 3rem;
-        }
-        .post-preview {
-            border-bottom: 1px solid #2d2d2d;
-            padding-bottom: 2rem;
-            margin-bottom: 2rem;
-        }
-        .post-preview h2 {
-            margin-bottom: 0.5rem;
-        }
-        .post-preview h2 a {
-            color: #fff;
-            text-decoration: none;
-        }
-        .post-preview h2 a:hover {
-            color: #4ee1a0;
-        }
-        .post-meta {
-            color: #7d7d7d;
-            font-size: 0.9rem;
-            margin-bottom: 1rem;
-        }
-        .post-preview p {
-            color: #d9d9d9;
-            margin-bottom: 1rem;
-        }
-        .read-more {
-            color: #4ee1a0;
-            text-decoration: none;
-        }
-    </style>
-</body>
+
+        <nav class="socials">
+          <ul>
+            <li>
+              <a
+                href="https://www.linkedin.com/in/thisispeterj/"
+                target="_blank"
+                aria-label="LinkedIn"
+              >
+                <img src="images/icon-linkedin.svg" alt="LinkedIn" />
+              </a>
+            </li>
+            <li>
+              <a
+                href="https://github.com/thisispeterj"
+                target="_blank"
+                aria-label="GitHub"
+              >
+                <img src="images/icon-github.svg" alt="GitHub" />
+              </a>
+            </li>
+            <li>
+              <a
+                href="https://codepen.io/thisispeterj/"
+                target="_blank"
+                aria-label="CodePen"
+              >
+                <img src="images/icon-codepen.svg" alt="CodePen" />
+              </a>
+            </li>
+            <li>
+              <a
+                href="https://www.frontendmentor.io/profile/thisispeterj"
+                target="_blank"
+                aria-label="Frontend Mentor"
+              >
+                <img
+                  src="images/icon-frontend-mentor.svg"
+                  alt="Frontend Mentor"
+                />
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </header>
+
+      <section class="blog-hero">
+        <div class="blog-hero__content">
+          <h1>Developer Blog</h1>
+          <p>
+            Thoughts on web development, accessibility, and my journey in tech.
+          </p>
+        </div>
+      </section>
+
+      <main class="blog-listing">
+        <div class="posts-grid">
+          {% for post in site.posts %}
+          <article class="post-card">
+            <div class="post-card__content">
+              <div class="post-card-meta">
+                <time>{{ post.date | date: "%B %d, %Y" }}</time>
+                <span class="post-card-categories">
+                  {% for category in post.categories %}
+                  <span class="card-category-tag">{{ category }}</span>
+                  {% endfor %}
+                </span>
+              </div>
+              <h2 class="post-card-title">
+                <a href="{{ post.url }}">{{ post.title }}</a>
+              </h2>
+              <p class="post-card-excerpt">
+                {{ post.excerpt | strip_html | truncatewords: 25 }}
+              </p>
+              <a href="{{ post.url }}" class="card-read-more-btn"
+                >Read Article →</a
+              >
+            </div>
+          </article>
+          {% endfor %}
+        </div>
+      </main>
+    </div>
+  </body>
 </html>

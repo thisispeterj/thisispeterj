@@ -1,25 +1,33 @@
 # Site settings
 title: Peter Jacobs
-email: your-email@example.com
-description: >-
-  Front-end developer passionate about building accessible web apps that users love.
+description: Front-end developer passionate about building accessible web apps
 baseurl: ""
 url: "https://thisispeterj.com"
 
 # Build settings
 markdown: kramdown
-plugins:
-  - jekyll-feed
-  - jekyll-sitemap
+highlighter: rouge
 
-# Blog settings
-permalink: /blog/:year/:month/:day/:title/
-paginate: 5
-paginate_path: "/blog/page:num/"
+# Jekyll configuration
+# plugins:
+#   - jekyll-feed
+#   - jekyll-sitemap
 
-# Exclude from processing
+# Collections
+collections:
+  posts:
+    output: true
+
+# Exclude files from processing
 exclude:
   - node_modules/
   - package.json
   - package-lock.json
-  - README.md
+  - scripts.js
+  - src/
+
+# Keep your existing files
+keep_files:
+  - index.html
+  - style.css
+  - images/

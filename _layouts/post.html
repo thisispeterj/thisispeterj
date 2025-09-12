@@ -1,56 +1,113 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% if page.title %}{{ page.title }} - {% endif %}{{ site.title }}</title>
-    <link rel="stylesheet" href="/style.css">
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-7GWY4W5SL2"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag() { dataLayer.push(arguments); }
-        gtag('js', new Date());
-        gtag('config', 'G-7GWY4W5SL2');
-    </script>
-</head>
-<body>
-    <nav class="blog-nav">
-        <a href="/">← Back to Portfolio</a>
-    </nav>
-    
-    <main class="blog-content">
-        {{ content }}
-    </main>
-    
-    <style>
-        .blog-nav {
-            padding: 2rem;
-            background: #1a1a1a;
-        }
-        .blog-nav a {
-            color: #4ee1a0;
-            text-decoration: none;
-        }
-        .blog-content {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 2rem;
-            line-height: 1.6;
-        }
-        .blog-content h1 {
-            color: #fff;
-            margin-bottom: 0.5rem;
-        }
-        .blog-content p {
-            color: #d9d9d9;
-            margin-bottom: 1rem;
-        }
-        .post-meta {
-            color: #7d7d7d;
-            font-size: 0.9rem;
-            margin-bottom: 2rem;
-        }
-    </style>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ page.title }} - Peter Jacobs</title>
+    <link rel="stylesheet" href="/style.css" />
+    <script src="/js/main.js"></script>
+  </head>
+  <body>
+    <div class="grid-layout">
+      <header class="main-header">
+        <div class="nav-left">
+          <a href="/" class="logo">PeterJacobs</a>
+          <nav class="main-nav">
+            <ul>
+              <li><a href="/#skills" class="nav-link">Skills</a></li>
+              <li><a href="/#projects" class="nav-link">Projects</a></li>
+              <li><a href="/#contact" class="nav-link">Contact</a></li>
+              <li><a href="/blog.html" class="nav-link active">Blog</a></li>
+            </ul>
+          </nav>
+        </div>
+
+        <nav class="socials">
+          <ul>
+            <li>
+              <a
+                href="https://www.linkedin.com/in/thisispeterj/"
+                target="_blank"
+                aria-label="LinkedIn"
+              >
+                <img src="/images/icon-linkedin.svg" alt="LinkedIn" />
+              </a>
+            </li>
+            <li>
+              <a
+                href="https://github.com/thisispeterj"
+                target="_blank"
+                aria-label="GitHub"
+              >
+                <img src="/images/icon-github.svg" alt="GitHub" />
+              </a>
+            </li>
+            <li>
+              <a
+                href="https://codepen.io/thisispeterj/"
+                target="_blank"
+                aria-label="CodePen"
+              >
+                <img src="/images/icon-codepen.svg" alt="CodePen" />
+              </a>
+            </li>
+            <li>
+              <a
+                href="https://www.frontendmentor.io/profile/thisispeterj"
+                target="_blank"
+                aria-label="Frontend Mentor"
+              >
+                <img
+                  src="/images/icon-frontend-mentor.svg"
+                  alt="Frontend Mentor"
+                />
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </header>
+
+      <nav class="breadcrumb-nav">
+        <a href="/blog.html" class="breadcrumb-link">← Back to Blog</a>
+      </nav>
+
+      <article class="blog-post">
+        <header class="post-header">
+          <div class="post-meta-header">
+            <time class="post-date">{{ page.date | date: "%B %d, %Y" }}</time>
+            {% if page.categories %}
+            <div class="post-categories">
+              {% for category in page.categories %}
+              <span class="category-tag">{{ category }}</span>
+              {% endfor %}
+            </div>
+            {% endif %}
+          </div>
+          <h1 class="post-title">{{ page.title }}</h1>
+          {% if page.excerpt %}
+          <p class="post-subtitle">{{ page.excerpt | strip_html }}</p>
+          {% endif %}
+        </header>
+
+        <div class="post-content">{{ content }}</div>
+
+        <footer class="post-footer">
+          <div class="post-navigation">
+            {% if page.previous.url %}
+            <a class="nav-previous" href="{{ page.previous.url }}">
+              ← Previous: {{ page.previous.title }}
+            </a>
+            {% endif %} {% if page.next.url %}
+            <a class="nav-next" href="{{ page.next.url }}">
+              Next: {{ page.next.title }} →
+            </a>
+            {% endif %}
+          </div>
+          <div class="back-to-blog">
+            <a href="/blog.html" class="button">← Back to All Posts</a>
+          </div>
+        </footer>
+      </article>
+    </div>
+  </body>
 </html>
