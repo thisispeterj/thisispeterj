@@ -1,0 +1,47 @@
+{
+  "name": "thisispeterj",
+  "version": "1.0.0",
+  "main": "assets/js/scripts.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "dev": "bundle exec jekyll serve",
+    "build": "bundle exec jekyll build",
+    "test": "playwright test",
+    "test:local": "playwright test",
+    "test:prod": "TEST_ENV=production playwright test",
+    "test:ci": "CI=true playwright test",
+    "test:headed": "playwright test --headed",
+    "test:headed:prod": "TEST_ENV=production playwright test --headed",
+    "test:debug": "playwright test --debug",
+    "test:debug:prod": "TEST_ENV=production playwright test --debug",
+    "test:ui": "playwright test --ui",
+    "test:smoke": "playwright test --grep '@smoke'",
+    "test:smoke:prod": "TEST_ENV=production playwright test --grep '@smoke'",
+    "test:accessibility": "playwright test accessibility.spec.ts",
+    "test:accessibility:prod": "TEST_ENV=production playwright test accessibility.spec.ts",
+    "test:performance": "playwright test performance.spec.ts",
+    "test:performance:prod": "TEST_ENV=production playwright test performance.spec.ts",
+    "test:visual": "playwright test visual.spec.ts",
+    "test:visual:prod": "TEST_ENV=production playwright test visual.spec.ts",
+    "test:mobile": "playwright test --project='Mobile Chrome' --project='Mobile Safari'",
+    "test:mobile:prod": "TEST_ENV=production playwright test --project='Mobile Chrome' --project='Mobile Safari'",
+    "test:chromium": "playwright test --project=chromium",
+    "test:firefox": "playwright test --project=firefox",
+    "test:webkit": "playwright test --project=webkit",
+    "test:report": "playwright show-report",
+    "test:update-snapshots": "playwright test --update-snapshots"
+  },
+  "keywords": [],
+  "author": "Peter Jacobs",
+  "license": "ISC",
+  "description": "Personal website for Peter Jacobs",
+  "devDependencies": {
+    "@axe-core/playwright": "^4.10.2",
+    "@lhci/cli": "^0.15.1",
+    "@playwright/test": "^1.55.0",
+    "@types/node": "^24.5.1",
+    "lighthouse": "^12.8.2"
+  }
+}

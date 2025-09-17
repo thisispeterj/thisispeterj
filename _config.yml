@@ -8,21 +8,35 @@ url: "https://thisispeterj.com"
 markdown: kramdown
 highlighter: rouge
 
-# Jekyll configuration
-# plugins:
-#   - jekyll-feed
-#   - jekyll-sitemap
+# Plugins
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+
+# Include pages from _pages directory
+include: ["_pages"]
 
 # Collections
 collections:
   posts:
     output: true
 
+# Default settings for pages
+defaults:
+  - scope:
+      path: "_pages"
+    values:
+      layout: "default"
+
 # Exclude files from processing
 exclude:
   - node_modules/
   - package.json
   - package-lock.json
+  - tests/
+  - playwright.config.ts
+  - .github/
+  - README.md
   - scripts.js
   - src/
 

@@ -68,3 +68,7 @@ Icon?
 .TemporaryItems
 .VolumeIcon.icns
 .com.apple.timemachine.donotpresent
+
+# Testing and coverage reports
+test-results/
+playwright-report/
