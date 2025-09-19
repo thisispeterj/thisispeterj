@@ -11,7 +11,7 @@ on:
 
 jobs:
   test:
-    timeout-minutes: 60
+    timeout-minutes: 90
     runs-on: ubuntu-latest
 
     strategy:
@@ -38,8 +38,24 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
+      - name: Get Playwright version
+        id: playwright-version
+        run: echo "version=$(npm list @playwright/test --depth=0 --json | jq -r '.dependencies["@playwright/test"].version')" >> $GITHUB_OUTPUT
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        id: playwright-cache
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ steps.playwright-version.outputs.version }}-${{ matrix.project }}
+
+      - name: Install Playwright system dependencies
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: npx playwright install-deps
+
+      - name: Install Playwright browser
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: npx playwright install ${{ matrix.project }}
 
       - name: Start Jekyll server
         run: bundle exec jekyll serve --detach --port 4000
@@ -67,7 +83,7 @@ jobs:
           retention-days: 30
 
   accessibility:
-    timeout-minutes: 30
+    timeout-minutes: 45
     runs-on: ubuntu-latest
 
     steps:
@@ -90,8 +106,24 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Install Playwright Browsers
-        run: npx playwright install --with-deps chromium
+      - name: Get Playwright version
+        id: playwright-version
+        run: echo "version=$(npm list @playwright/test --depth=0 --json | jq -r '.dependencies["@playwright/test"].version')" >> $GITHUB_OUTPUT
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        id: playwright-cache
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ steps.playwright-version.outputs.version }}-chromium
+
+      - name: Install Playwright system dependencies
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: npx playwright install-deps
+
+      - name: Install Playwright browser
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: npx playwright install chromium
 
       - name: Start Jekyll server
         run: bundle exec jekyll serve --detach --port 4000
@@ -115,7 +147,7 @@ jobs:
           retention-days: 30
 
   performance:
-    timeout-minutes: 30
+    timeout-minutes: 45
     runs-on: ubuntu-latest
 
     steps:
@@ -138,8 +170,24 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Install Playwright Browsers
-        run: npx playwright install --with-deps chromium
+      - name: Get Playwright version
+        id: playwright-version
+        run: echo "version=$(npm list @playwright/test --depth=0 --json | jq -r '.dependencies["@playwright/test"].version')" >> $GITHUB_OUTPUT
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        id: playwright-cache
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ steps.playwright-version.outputs.version }}-chromium
+
+      - name: Install Playwright system dependencies
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: npx playwright install-deps
+
+      - name: Install Playwright browser
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: npx playwright install chromium
 
       - name: Start Jekyll server
         run: bundle exec jekyll serve --detach --port 4000
