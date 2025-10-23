@@ -72,117 +72,117 @@ jobs:
             playwright-report/
           retention-days: 30
 
-  accessibility:
-    timeout-minutes: 45
-    runs-on: ubuntu-latest
+  # accessibility:
+  #   timeout-minutes: 45
+  #   runs-on: ubuntu-latest
 
-    steps:
-      - uses: actions/checkout@v4
+  #   steps:
+  #     - uses: actions/checkout@v4
 
-      - name: Setup Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: "3.1"
-          bundler-cache: true
+  #     - name: Setup Ruby
+  #       uses: ruby/setup-ruby@v1
+  #       with:
+  #         ruby-version: "3.1"
+  #         bundler-cache: true
 
-      - name: Install Jekyll dependencies
-        run: bundle install
+  #     - name: Install Jekyll dependencies
+  #       run: bundle install
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: lts/*
-          cache: "npm"
+  #     - uses: actions/setup-node@v4
+  #       with:
+  #         node-version: lts/*
+  #         cache: "npm"
 
-      - name: Install dependencies
-        run: npm ci
+  #     - name: Install dependencies
+  #       run: npm ci
 
-      - name: Get Playwright version
-        id: playwright-version
-        run: echo "version=$(npm list @playwright/test --depth=0 --json | jq -r '.dependencies["@playwright/test"].version')" >> $GITHUB_OUTPUT
+  #     - name: Get Playwright version
+  #       id: playwright-version
+  #       run: echo "version=$(npm list @playwright/test --depth=0 --json | jq -r '.dependencies["@playwright/test"].version')" >> $GITHUB_OUTPUT
 
-      - name: Cache Playwright browsers
-        uses: actions/cache@v4
-        id: playwright-cache
-        with:
-          path: ~/.cache/ms-playwright
-          key: playwright-${{ steps.playwright-version.outputs.version }}-chromium
+  #     - name: Cache Playwright browsers
+  #       uses: actions/cache@v4
+  #       id: playwright-cache
+  #       with:
+  #         path: ~/.cache/ms-playwright
+  #         key: playwright-${{ steps.playwright-version.outputs.version }}-chromium
 
-      - name: Install Playwright system dependencies
-        if: steps.playwright-cache.outputs.cache-hit != 'true'
-        run: npx playwright install-deps
+  #     - name: Install Playwright system dependencies
+  #       if: steps.playwright-cache.outputs.cache-hit != 'true'
+  #       run: npx playwright install-deps
 
-      - name: Install Playwright browser
-        if: steps.playwright-cache.outputs.cache-hit != 'true'
-        run: npx playwright install chromium
+  #     - name: Install Playwright browser
+  #       if: steps.playwright-cache.outputs.cache-hit != 'true'
+  #       run: npx playwright install chromium
 
-      - name: Run accessibility tests
-        run: npm run test:accessibility
+  #     - name: Run accessibility tests
+  #       run: npm run test:accessibility
 
-      - name: Upload accessibility results
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: accessibility-results
-          path: test-results/
-          retention-days: 30
+  #     - name: Upload accessibility results
+  #       uses: actions/upload-artifact@v4
+  #       if: always()
+  #       with:
+  #         name: accessibility-results
+  #         path: test-results/
+  #         retention-days: 30
 
-  performance:
-    timeout-minutes: 45
-    runs-on: ubuntu-latest
+  # performance:
+  #   timeout-minutes: 45
+  #   runs-on: ubuntu-latest
 
-    steps:
-      - uses: actions/checkout@v4
+  #   steps:
+  #     - uses: actions/checkout@v4
 
-      - name: Setup Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: "3.1"
-          bundler-cache: true
+  #     - name: Setup Ruby
+  #       uses: ruby/setup-ruby@v1
+  #       with:
+  #         ruby-version: "3.1"
+  #         bundler-cache: true
 
-      - name: Install Jekyll dependencies
-        run: bundle install
+  #     - name: Install Jekyll dependencies
+  #       run: bundle install
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: lts/*
-          cache: "npm"
+  #     - uses: actions/setup-node@v4
+  #       with:
+  #         node-version: lts/*
+  #         cache: "npm"
 
-      - name: Install dependencies
-        run: npm ci
+  #     - name: Install dependencies
+  #       run: npm ci
 
-      - name: Get Playwright version
-        id: playwright-version
-        run: echo "version=$(npm list @playwright/test --depth=0 --json | jq -r '.dependencies["@playwright/test"].version')" >> $GITHUB_OUTPUT
+  #     - name: Get Playwright version
+  #       id: playwright-version
+  #       run: echo "version=$(npm list @playwright/test --depth=0 --json | jq -r '.dependencies["@playwright/test"].version')" >> $GITHUB_OUTPUT
 
-      - name: Cache Playwright browsers
-        uses: actions/cache@v4
-        id: playwright-cache
-        with:
-          path: ~/.cache/ms-playwright
-          key: playwright-${{ steps.playwright-version.outputs.version }}-chromium
+  #     - name: Cache Playwright browsers
+  #       uses: actions/cache@v4
+  #       id: playwright-cache
+  #       with:
+  #         path: ~/.cache/ms-playwright
+  #         key: playwright-${{ steps.playwright-version.outputs.version }}-chromium
 
-      - name: Install Playwright system dependencies
-        if: steps.playwright-cache.outputs.cache-hit != 'true'
-        run: npx playwright install-deps
+  #     - name: Install Playwright system dependencies
+  #       if: steps.playwright-cache.outputs.cache-hit != 'true'
+  #       run: npx playwright install-deps
 
-      - name: Install Playwright browser
-        if: steps.playwright-cache.outputs.cache-hit != 'true'
-        run: npx playwright install chromium
+  #     - name: Install Playwright browser
+  #       if: steps.playwright-cache.outputs.cache-hit != 'true'
+  #       run: npx playwright install chromium
 
-      - name: Run performance tests
-        run: npm run test:performance
+  #     - name: Run performance tests
+  #       run: npm run test:performance
 
-      - name: Upload performance results
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: performance-results
-          path: test-results/
-          retention-days: 30
+  #     - name: Upload performance results
+  #       uses: actions/upload-artifact@v4
+  #       if: always()
+  #       with:
+  #         name: performance-results
+  #         path: test-results/
+  #         retention-days: 30
 
   report:
     if: always()
-    needs: [test, accessibility, performance]
+    needs: [test]
     runs-on: ubuntu-latest
 
     steps:

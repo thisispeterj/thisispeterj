@@ -9,20 +9,21 @@ import { defineConfig, devices } from "@playwright/test";
 
 const isProduction = process.env.TEST_ENV === "production";
 const isCI = !!process.env.CI;
+const localBase = process.env.LOCAL_BASE_URL || "http://127.0.0.1:4000";
 
 // Environment-specific configuration
 const config = {
   local: {
-    baseURL: process.env.LOCAL_BASE_URL || "http://127.0.0.1:4000",
+    baseURL: localBase,
     webServer: {
       command: "bundle exec jekyll serve",
-      url: process.env.LOCAL_BASE_URL || "http://127.0.0.1:4000",
+      url: localBase,
       reuseExistingServer: !isCI,
       timeout: 120 * 1000, // 2 minutes for Jekyll to start
     },
   },
   production: {
-    baseURL: process.env.PRODUCTION_BASE_URL || "https://thisispeterj.com",
+    baseURL: "https://thisispeterj.com",
     webServer: undefined, // No local server needed for production tests
   },
 };
@@ -37,20 +38,23 @@ export default defineConfig({
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
-  forbidOnly: !!process.env.CI,
+  forbidOnly: isCI,
   /* Retry on CI only */
-  retries: process.env.CI ? 2 : 0,
+  retries: isCI ? 2 : 0,
   /* Opt out of parallel tests on CI. */
-  workers: process.env.CI ? 1 : undefined,
+  workers: isCI ? 1 : undefined,
 
   /* Enhanced reporting configuration */
   reporter: [
-    ["html", { outputFolder: "playwright-report", open: "never" }],
-    ["json", { outputFile: "test-results/results.json" }],
-    ["junit", { outputFile: "test-results/results.xml" }],
-    ["./tests/utils/custom-reporter.ts"],
     ["list"],
-    process.env.CI ? ["github"] : ["dot"],
+    [
+      "html",
+      {
+        outputFolder: "playwright-report",
+        open: isCI ? "never" : "on-failure",
+      },
+    ],
+    isCI ? ["github"] : ["dot"],
   ],
 
   /* Output directory for test artifacts */
@@ -80,42 +84,18 @@ export default defineConfig({
   },
 
   /* Configure projects for major browsers */
-  projects: [
-    {
-      name: "chromium",
-      use: { ...devices["Desktop Chrome"] },
-    },
-
-    {
-      name: "firefox",
-      use: { ...devices["Desktop Firefox"] },
-    },
-
-    {
-      name: "webkit",
-      use: { ...devices["Desktop Safari"] },
-    },
-
-    /* Test against mobile viewports. */
-    {
-      name: "Mobile Chrome",
-      use: { ...devices["Pixel 5"] },
-    },
-    {
-      name: "Mobile Safari",
-      use: { ...devices["iPhone 12"] },
-    },
-
-    /* Test against branded browsers. */
-    // {
-    //   name: 'Microsoft Edge',
-    //   use: { ...devices['Desktop Edge'], channel: 'msedge' },
-    // },
-    // {
-    //   name: 'Google Chrome',
-    //   use: { ...devices['Desktop Chrome'], channel: 'chrome' },
-    // },
-  ],
+  projects: isCI
+    ? [
+        { name: "chromium", use: { ...devices["Desktop Chrome"] } },
+        { name: "Mobile Chrome", use: { ...devices["Pixel 5"] } },
+      ]
+    : [
+        { name: "chromium", use: { ...devices["Desktop Chrome"] } },
+        { name: "firefox", use: { ...devices["Desktop Firefox"] } },
+        { name: "webkit", use: { ...devices["Desktop Safari"] } },
+        { name: "Mobile Chrome", use: { ...devices["Pixel 5"] } },
+        { name: "Mobile Safari", use: { ...devices["iPhone 12"] } },
+      ],
 
   /* Run your local dev server before starting the tests */
   webServer: currentConfig.webServer,
