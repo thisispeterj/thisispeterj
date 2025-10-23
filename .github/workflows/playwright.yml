@@ -62,8 +62,8 @@ jobs:
         run: npx playwright install
 
       # Run smoke: all tests on desktop Chromium, and only @mobile-smoke on Mobile Chrome
-      - name: Run Chromium (all tests)
-        run: npx playwright test --project=chromium
+      - name: Run Playwright tests (update baselines)
+        run: npx playwright test tests/visual.spec.ts --update-snapshots --project=chromium
         env:
           CI: true
 
