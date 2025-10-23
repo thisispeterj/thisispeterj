@@ -2,199 +2,143 @@ name: Playwright Tests
 
 on:
   push:
-    branches: [main, develop]
+    branches: [main, develop] # run on pushes to main/develop
   pull_request:
-    branches: [main]
+    branches: [main] # run on PRs into main
   schedule:
-    # Run tests daily at 2 AM UTC
-    - cron: "0 2 * * *"
+    - cron: "0 2 * * *" # nightly @ 02:00 UTC
 
 jobs:
-  test:
-    timeout-minutes: 90
+  # =========================
+  # 1) PR / Push: FAST SMOKE
+  #    Build Jekyll and run quick checks
+  # =========================
+  pr-smoke:
+    name: PR/Push Smoke (Built App)
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        project: [chromium, firefox, webkit]
+    timeout-minutes: 45
+    if: github.event_name == 'pull_request' || github.event_name == 'push'
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Ruby
-        uses: ruby/setup-ruby@v1
+      # Build local Jekyll site (matches config's local mode)
+      - uses: ruby/setup-ruby@v1
         with:
           ruby-version: "3.1"
           bundler-cache: true
 
-      - name: Install Jekyll dependencies
+      - name: Install Jekyll deps
         run: bundle install
 
       - uses: actions/setup-node@v4
         with:
-          node-version: lts/*
+          node-version: 20
           cache: "npm"
 
-      - name: Install dependencies
+      - name: Install npm deps
         run: npm ci
 
+      # Cache Playwright browsers by version
       - name: Get Playwright version
-        id: playwright-version
-        run: echo "version=$(npm list @playwright/test --depth=0 --json | jq -r '.dependencies["@playwright/test"].version')" >> $GITHUB_OUTPUT
+        id: pw
+        run: echo "version=$(node -p \"require('./package.json').devDependencies?.['@playwright/test'] || require('./package.json').dependencies?.['@playwright/test']\")" >> $GITHUB_OUTPUT
 
       - name: Cache Playwright browsers
         uses: actions/cache@v4
-        id: playwright-cache
+        id: pw-cache
         with:
           path: ~/.cache/ms-playwright
-          key: playwright-${{ steps.playwright-version.outputs.version }}-${{ matrix.project }}
+          key: pw-${{ steps.pw.outputs.version }}
 
-      - name: Install Playwright system dependencies
-        if: steps.playwright-cache.outputs.cache-hit != 'true'
+      - name: Install Playwright system deps
+        if: steps.pw-cache.outputs.cache-hit != 'true'
         run: npx playwright install-deps
 
-      - name: Install Playwright browser
-        if: steps.playwright-cache.outputs.cache-hit != 'true'
-        run: npx playwright install ${{ matrix.project }}
+      - name: Install Playwright browsers
+        if: steps.pw-cache.outputs.cache-hit != 'true'
+        run: npx playwright install
 
-      - name: Run Playwright tests
-        run: npx playwright test --project=${{ matrix.project }}
+      # Run smoke: all tests on desktop Chromium, and only @mobile-smoke on Mobile Chrome
+      - name: Run Chromium (all tests)
+        run: npx playwright test --project=chromium
         env:
           CI: true
 
-      - name: Upload test results
-        uses: actions/upload-artifact@v4
+      - name: Run Mobile Chrome (@mobile-smoke only)
+        run: npx playwright test --project="Mobile Chrome" -g "@mobile-smoke"
+        env:
+          CI: true
+
+      - name: Upload artifacts (HTML report + failure assets)
         if: always()
+        uses: actions/upload-artifact@v4
         with:
-          name: playwright-results-${{ matrix.project }}
+          name: playwright-report-pr
           path: |
-            test-results/
             playwright-report/
-          retention-days: 30
+            test-results/
+          retention-days: 14
 
-  # accessibility:
-  #   timeout-minutes: 45
-  #   runs-on: ubuntu-latest
-
-  #   steps:
-  #     - uses: actions/checkout@v4
-
-  #     - name: Setup Ruby
-  #       uses: ruby/setup-ruby@v1
-  #       with:
-  #         ruby-version: "3.1"
-  #         bundler-cache: true
-
-  #     - name: Install Jekyll dependencies
-  #       run: bundle install
-
-  #     - uses: actions/setup-node@v4
-  #       with:
-  #         node-version: lts/*
-  #         cache: "npm"
-
-  #     - name: Install dependencies
-  #       run: npm ci
-
-  #     - name: Get Playwright version
-  #       id: playwright-version
-  #       run: echo "version=$(npm list @playwright/test --depth=0 --json | jq -r '.dependencies["@playwright/test"].version')" >> $GITHUB_OUTPUT
-
-  #     - name: Cache Playwright browsers
-  #       uses: actions/cache@v4
-  #       id: playwright-cache
-  #       with:
-  #         path: ~/.cache/ms-playwright
-  #         key: playwright-${{ steps.playwright-version.outputs.version }}-chromium
-
-  #     - name: Install Playwright system dependencies
-  #       if: steps.playwright-cache.outputs.cache-hit != 'true'
-  #       run: npx playwright install-deps
-
-  #     - name: Install Playwright browser
-  #       if: steps.playwright-cache.outputs.cache-hit != 'true'
-  #       run: npx playwright install chromium
-
-  #     - name: Run accessibility tests
-  #       run: npm run test:accessibility
-
-  #     - name: Upload accessibility results
-  #       uses: actions/upload-artifact@v4
-  #       if: always()
-  #       with:
-  #         name: accessibility-results
-  #         path: test-results/
-  #         retention-days: 30
-
-  # performance:
-  #   timeout-minutes: 45
-  #   runs-on: ubuntu-latest
-
-  #   steps:
-  #     - uses: actions/checkout@v4
-
-  #     - name: Setup Ruby
-  #       uses: ruby/setup-ruby@v1
-  #       with:
-  #         ruby-version: "3.1"
-  #         bundler-cache: true
-
-  #     - name: Install Jekyll dependencies
-  #       run: bundle install
-
-  #     - uses: actions/setup-node@v4
-  #       with:
-  #         node-version: lts/*
-  #         cache: "npm"
-
-  #     - name: Install dependencies
-  #       run: npm ci
-
-  #     - name: Get Playwright version
-  #       id: playwright-version
-  #       run: echo "version=$(npm list @playwright/test --depth=0 --json | jq -r '.dependencies["@playwright/test"].version')" >> $GITHUB_OUTPUT
-
-  #     - name: Cache Playwright browsers
-  #       uses: actions/cache@v4
-  #       id: playwright-cache
-  #       with:
-  #         path: ~/.cache/ms-playwright
-  #         key: playwright-${{ steps.playwright-version.outputs.version }}-chromium
-
-  #     - name: Install Playwright system dependencies
-  #       if: steps.playwright-cache.outputs.cache-hit != 'true'
-  #       run: npx playwright install-deps
-
-  #     - name: Install Playwright browser
-  #       if: steps.playwright-cache.outputs.cache-hit != 'true'
-  #       run: npx playwright install chromium
-
-  #     - name: Run performance tests
-  #       run: npm run test:performance
-
-  #     - name: Upload performance results
-  #       uses: actions/upload-artifact@v4
-  #       if: always()
-  #       with:
-  #         name: performance-results
-  #         path: test-results/
-  #         retention-days: 30
-
-  report:
-    if: always()
-    needs: [test]
+  # =========================
+  # 2) Nightly: FULL SUITE
+  #    Build Jekyll and run full config projects
+  # =========================
+  nightly-full:
+    name: Nightly Full (Built App)
     runs-on: ubuntu-latest
+    timeout-minutes: 90
+    if: github.event_name == 'schedule'
 
     steps:
-      - name: Download all artifacts
-        uses: actions/download-artifact@v4
+      - uses: actions/checkout@v4
 
-      - name: Merge test results
-        run: |
-          mkdir -p merged-results
-          find . -name "results.json" -exec cp {} merged-results/ \;
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.1"
+          bundler-cache: true
 
-      - name: Generate combined report
-        run: |
-          echo "Test execution completed"
-          echo "Results available in artifacts"
+      - name: Install Jekyll deps
+        run: bundle install
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
+
+      - name: Install npm deps
+        run: npm ci
+
+      - name: Get Playwright version
+        id: pw
+        run: echo "version=$(node -p \"require('./package.json').devDependencies?.['@playwright/test'] || require('./package.json').dependencies?.['@playwright/test']\")" >> $GITHUB_OUTPUT
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        id: pw-cache
+        with:
+          path: ~/.cache/ms-playwright
+          key: pw-${{ steps.pw.outputs.version }}
+
+      - name: Install Playwright system deps
+        if: steps.pw-cache.outputs.cache-hit != 'true'
+        run: npx playwright install-deps
+
+      - name: Install Playwright browsers
+        if: steps.pw-cache.outputs.cache-hit != 'true'
+        run: npx playwright install
+
+      - name: Run Playwright tests (full)
+        run: npx playwright test
+        env:
+          CI: true
+
+      - name: Upload artifacts (HTML report + failure assets)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-nightly
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 30
